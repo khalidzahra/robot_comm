@@ -1,12 +1,14 @@
-const net = require('net');
-const PORT = process.env.PORT || 8000;
-
-const server = net.createServer((socket) => {
-    socket.on("data", function (data) {
-        console.log(data.toString());
-        socket.write(`Received: ${data.toString()}`);
-    });
+const {WebSocketServer} = require('ws');
+const wss = new WebSocketServer({
+    port: process.env.PORT || 8000,
 });
-server.listen(PORT, () => {
-    console.log(`Server listening on port ${process.env.address} ${PORT}`);
+
+wss.on("connection", (ws) => {
+    console.log("connected")
+    ws.on('error', console.error);
+
+    ws.on('message', function message(data) {
+        console.log(`Received: ${data}`);
+        ws.send(`Logged ${data}`);
+    });
 });
